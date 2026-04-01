@@ -18,7 +18,7 @@
 3. **SHA-256 (optional, for release notes)**
 
    ```powershell
-   Get-FileHash .\artifacts\WindowResizer-v1.0.0.zip -Algorithm SHA256
+   Get-FileHash .\artifacts\WindowResizer-v0.1.0.zip -Algorithm SHA256
    ```
 
    Paste the hash into the GitHub Release description so users can verify the download.
@@ -26,8 +26,8 @@
 4. **Git tag**
 
    ```text
-   git tag v1.0.0
-   git push origin v1.0.0
+   git tag v0.1.0
+   git push origin v0.1.0
    ```
 
    Use the same version as in the `.csproj` (e.g. `v` + `Version`).

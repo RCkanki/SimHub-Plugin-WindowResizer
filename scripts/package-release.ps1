@@ -44,18 +44,21 @@ try {
     $zipName = "WindowResizer-v$version.zip"
     $zipPath = Join-Path $artifacts $zipName
 
-    $staging = Join-Path $artifacts "staging-$version"
-    if (Test-Path $staging) { Remove-Item -Recurse -Force $staging }
+    # Staging under %TEMP% avoids Dropbox/sync locks when deleting the folder under the repo.
+    $staging = Join-Path ([System.IO.Path]::GetTempPath()) ("WindowResizer-staging-" + [Guid]::NewGuid().ToString("n"))
     New-Item -ItemType Directory -Force -Path $staging | Out-Null
+    try {
+        Copy-Item $dll (Join-Path $staging "WindowResizer.dll")
+        Copy-Item (Join-Path $repoRoot "LICENSE") $staging
+        Copy-Item (Join-Path $repoRoot "CHANGELOG.md") $staging
+        Copy-Item (Join-Path $repoRoot "docs\INSTALL.txt") $staging
 
-    Copy-Item $dll (Join-Path $staging "WindowResizer.dll")
-    Copy-Item (Join-Path $repoRoot "LICENSE") $staging
-    Copy-Item (Join-Path $repoRoot "CHANGELOG.md") $staging
-    Copy-Item (Join-Path $repoRoot "docs\INSTALL.txt") $staging
-
-    if (Test-Path $zipPath) { Remove-Item -Force $zipPath }
-    Compress-Archive -Path (Join-Path $staging "*") -DestinationPath $zipPath
-    Remove-Item -Recurse -Force $staging
+        if (Test-Path $zipPath) { Remove-Item -Force $zipPath }
+        Compress-Archive -Path (Join-Path $staging "*") -DestinationPath $zipPath
+    }
+    finally {
+        Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $staging
+    }
 
     Write-Host "Created $zipPath"
     $hash = Get-FileHash $zipPath -Algorithm SHA256
