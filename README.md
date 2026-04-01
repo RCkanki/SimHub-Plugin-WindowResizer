@@ -19,6 +19,31 @@ A **SimHub plugin** for Windows that saves **window layout profiles** (position,
 
 ---
 
+## First-time publish to GitHub
+
+Use this when the project exists only on your PC and there is **no GitHub remote** yet.
+
+1. On GitHub, click **New repository**. Use a name such as `WindowResizer`.
+2. Create it **empty** (do **not** add README, `.gitignore`, or license on GitHub — this repo already has them).
+3. In your local clone folder, add the remote and push (replace `USERNAME` and the repo name if different):
+
+   ```bash
+   git remote add origin https://github.com/USERNAME/WindowResizer.git
+   git push -u origin master
+   ```
+
+   If your default branch is `main` instead of `master`, run `git branch -M main` before `git push -u origin main`.
+
+4. When you are ready to publish a version, push the tag as well:
+
+   ```bash
+   git push origin v0.1.0
+   ```
+
+   Then on GitHub open **Releases → Create a new release**, choose that tag, attach `artifacts/WindowResizer-v0.1.0.zip` (see [`docs/RELEASE.md`](docs/RELEASE.md)), and paste notes from `CHANGELOG.md`.
+
+---
+
 ## Installing from GitHub Releases
 
 1. On GitHub, open this repository’s **Releases** page and download **`WindowResizer-v*.zip`** for the version you want.
@@ -145,4 +170,4 @@ Legacy entries that stored `ProcessName` with a trailing `.exe` are normalized o
 
 ## Author
 
-Plugin metadata: **RCkanki** (`PluginAuthor` in `Plugin.cs`). Update the Releases URL in [Installing from GitHub Releases](#installing-from-github-releases) after the repository is public.
+Plugin metadata: **RCkanki** (`PluginAuthor` in `Plugin.cs`).
