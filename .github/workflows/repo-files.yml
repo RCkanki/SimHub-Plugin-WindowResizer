@@ -1,0 +1,20 @@
+name: Repo files
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify release-related files exist
+        run: |
+          test -f LICENSE
+          test -f CHANGELOG.md
+          test -f docs/INSTALL.txt
+          test -f docs/window-resizer-ui.png
+          test -f scripts/package-release.ps1

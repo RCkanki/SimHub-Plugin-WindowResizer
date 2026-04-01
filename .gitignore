@@ -1,0 +1,13 @@
+bin/
+obj/
+artifacts/
+.serena/
+.vs/
+*.user
+*.suo
+*.userprefs
+*.log
+TestResult*/
+*.cache
+*.ide
+

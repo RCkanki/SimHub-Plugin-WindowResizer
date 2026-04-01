@@ -1,0 +1,19 @@
+WindowResizer — SimHub plugin (install from release ZIP)
+=======================================================
+
+1. Close SimHub if it is running (recommended).
+
+2. Copy WindowResizer.dll into your SimHub plugins folder (same approach as
+   other third-party SimHub plugins). Typical install root:
+     C:\Program Files (x86)\SimHub\
+   Exact plugin subdirectory follows current SimHub documentation for your
+   version (folder names can change between SimHub updates).
+
+3. Start SimHub. Open Settings and select "Window Resizer" in the left menu.
+
+4. Profile data is stored under the SimHub base directory:
+     WindowResizer\profiles.json
+
+Requirements: Windows, SimHub, .NET Framework 4.8 (as shipped with SimHub).
+
+See README.md in the repository for build instructions and full usage.
