@@ -2,6 +2,8 @@
 
 A **SimHub plugin** for Windows that saves **window layout profiles** (position, size, borderless, z-order) and applies them on demand or automatically. It is aimed at simulator rigs where you run **SimHub on one display** and **other apps** (telemetry browsers, Discord, streaming tools, secondary games, dashboards) on a **second monitor** or a dedicated screen area. You can **cycle or jump between profiles** so the “right” application is moved into a fixed viewport and brought forward—useful when you want to **swap what effectively occupies your sub-screen** without alt-tabbing through every window manually.
 
+**Repository:** [github.com/RCkanki/SimHub-Plugin-WindowResizer](https://github.com/RCkanki/SimHub-Plugin-WindowResizer)
+
 ---
 
 ## Features
@@ -19,34 +21,9 @@ A **SimHub plugin** for Windows that saves **window layout profiles** (position,
 
 ---
 
-## First-time publish to GitHub
-
-Use this when the project exists only on your PC and there is **no GitHub remote** yet.
-
-1. On GitHub, click **New repository**. Use a name such as `WindowResizer`.
-2. Create it **empty** (do **not** add README, `.gitignore`, or license on GitHub — this repo already has them).
-3. In your local clone folder, add the remote and push (replace `USERNAME` and the repo name if different):
-
-   ```bash
-   git remote add origin https://github.com/USERNAME/WindowResizer.git
-   git push -u origin master
-   ```
-
-   If your default branch is `main` instead of `master`, run `git branch -M main` before `git push -u origin main`.
-
-4. When you are ready to publish a version, push the tag as well:
-
-   ```bash
-   git push origin v0.1.0
-   ```
-
-   Then on GitHub open **Releases → Create a new release**, choose that tag, attach `artifacts/WindowResizer-v0.1.0.zip` (see [`docs/RELEASE.md`](docs/RELEASE.md)), and paste notes from `CHANGELOG.md`.
-
----
-
 ## Installing from GitHub Releases
 
-1. On GitHub, open this repository’s **Releases** page and download **`WindowResizer-v*.zip`** for the version you want.
+1. Open **[Releases](https://github.com/RCkanki/SimHub-Plugin-WindowResizer/releases)** and download **`WindowResizer-v*.zip`** for the version you want.
 2. Extract the ZIP. You should have `WindowResizer.dll`, `LICENSE`, `CHANGELOG.md`, and `INSTALL.txt`.
 3. Follow **`INSTALL.txt`** (copy `WindowResizer.dll` into SimHub’s plugin folder, then restart SimHub if needed).
 4. Optional: verify the ZIP with the **SHA-256** hash published in the release notes.
@@ -89,7 +66,7 @@ WindowResizer adds a **controller-centric** way to manage that: map **NEXT profi
 
 ## Building
 
-1. Clone this repository.
+1. Clone: `git clone https://github.com/RCkanki/SimHub-Plugin-WindowResizer.git`
 2. Open `WindowResizer.csproj` and, if needed, adjust **HintPath** entries so they match your SimHub install, for example:
    - `SimHub.Plugins.dll`
    - `GameReaderCommon.dll`
