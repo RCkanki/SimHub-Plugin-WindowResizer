@@ -134,6 +134,7 @@ Legacy entries that stored `ProcessName` with a trailing `.exe` are normalized o
 
 - **Windows only** — Uses user32 / dwmapi.  
 - **Foreground and focus** — Windows may restrict `SetForegroundWindow`; the plugin uses common mitigations (UI thread, attach-thread-input, z-order tricks) but some games or policies can still block focus stealing.  
+- **Out-of-bounds profile values** — When a target rectangle exceeds the current monitor bounds, WindowResizer clamps position and shrinks size as needed so the window stays fully visible on that monitor.  
 - **Single-monitor coordinates** in the UI are expressed in **primary screen** space; multi-DPI setups may need manual tuning.  
 - **Not affiliated** with SimHub or Resize Raccoon; use at your own risk on production rigs.
 

@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-04-09
+
+### Fixed
+
+- Clamp resized windows to monitor bounds so applied layouts remain fully visible.
+- Shrink width/height when requested size exceeds the current monitor bounds.
+
 ## [0.1.0] - 2026-04-01
 
 Initial development release. Behavior and settings may change before **1.0.0**.

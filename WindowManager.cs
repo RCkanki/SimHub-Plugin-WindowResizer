@@ -140,6 +140,35 @@ namespace WindowResizer
             public int Bottom;
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        private struct POINT
+        {
+            public int X;
+            public int Y;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        private struct MONITORINFO
+        {
+            public int cbSize;
+            public RECT rcMonitor;
+            public RECT rcWork;
+            public uint dwFlags;
+        }
+
+        private const uint MonitorDefaultToNull = 0x00000000;
+        private const uint MonitorDefaultToPrimary = 0x00000001;
+        private const uint MonitorDefaultToNearest = 0x00000002;
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint dwFlags);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr MonitorFromPoint(POINT pt, uint dwFlags);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
+
         // classContains parameter removed (class-name filter unused).
         public static IntPtr FindWindowForProcess(
             string processName,
@@ -498,6 +527,93 @@ namespace WindowResizer
                    h == profile.Height;
         }
 
+        private static int ClampInt(int value, int min, int max)
+        {
+            if (value < min) return min;
+            if (value > max) return max;
+            return value;
+        }
+
+        private static bool TryGetMonitorBoundsFromHandle(IntPtr hMonitor, out RECT bounds)
+        {
+            bounds = default;
+            if (hMonitor == IntPtr.Zero)
+            {
+                return false;
+            }
+
+            var mi = new MONITORINFO { cbSize = Marshal.SizeOf(typeof(MONITORINFO)) };
+            if (!GetMonitorInfo(hMonitor, ref mi))
+            {
+                return false;
+            }
+
+            bounds = mi.rcMonitor;
+            return true;
+        }
+
+        private static RECT ResolveTargetBounds(IntPtr hWnd, int x, int y, int width, int height)
+        {
+            if (hWnd != IntPtr.Zero && IsWindow(hWnd))
+            {
+                var fromWindow = MonitorFromWindow(hWnd, MonitorDefaultToNull);
+                if (TryGetMonitorBoundsFromHandle(fromWindow, out var windowBounds))
+                {
+                    return windowBounds;
+                }
+            }
+
+            var safeW = Math.Max(1, width);
+            var safeH = Math.Max(1, height);
+            var center = new POINT
+            {
+                X = x + (safeW / 2),
+                Y = y + (safeH / 2)
+            };
+
+            var fromPoint = MonitorFromPoint(center, MonitorDefaultToNearest);
+            if (TryGetMonitorBoundsFromHandle(fromPoint, out var pointBounds))
+            {
+                return pointBounds;
+            }
+
+            var primary = MonitorFromPoint(new POINT { X = 0, Y = 0 }, MonitorDefaultToPrimary);
+            if (TryGetMonitorBoundsFromHandle(primary, out var primaryBounds))
+            {
+                return primaryBounds;
+            }
+
+            return new RECT
+            {
+                Left = 0,
+                Top = 0,
+                Right = Math.Max(1, safeW),
+                Bottom = Math.Max(1, safeH)
+            };
+        }
+
+        private static void ClampToScreenBounds(
+            IntPtr hWnd,
+            ref int x,
+            ref int y,
+            ref int width,
+            ref int height)
+        {
+            var bounds = ResolveTargetBounds(hWnd, x, y, width, height);
+            var boundsWidth = Math.Max(1, bounds.Right - bounds.Left);
+            var boundsHeight = Math.Max(1, bounds.Bottom - bounds.Top);
+            width = ClampInt(Math.Max(1, width), 1, boundsWidth);
+            height = ClampInt(Math.Max(1, height), 1, boundsHeight);
+
+            var minX = bounds.Left;
+            var maxX = bounds.Right - width;
+            var minY = bounds.Top;
+            var maxY = bounds.Bottom - height;
+
+            x = ClampInt(x, minX, maxX);
+            y = ClampInt(y, minY, maxY);
+        }
+
         /// <summary>
         /// Changes position and size only; does not alter Z-order or focus (avoids implicit topmost when <c>hWndInsertAfter</c> is unset).
         /// Use <see cref="BringToFront"/> to raise the window.
@@ -510,6 +626,7 @@ namespace WindowResizer
             int height)
         {
             if (hWnd == IntPtr.Zero) return;
+            ClampToScreenBounds(hWnd, ref x, ref y, ref width, ref height);
             const uint flags = SWP_SHOWWINDOW | SWP_FRAMECHANGED | SWP_NOZORDER | SWP_NOACTIVATE;
             SetWindowPos(hWnd, IntPtr.Zero, x, y, width, height, flags);
         }
