@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Clamp resized windows to monitor bounds so applied layouts remain fully visible.
 - Shrink width/height when requested size exceeds the current monitor bounds.
+- Allow window layouts to span multiple monitors while remaining inside virtual desktop bounds.
 
 ## [0.1.0] - 2026-04-01
 

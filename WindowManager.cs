@@ -159,6 +159,10 @@ namespace WindowResizer
         private const uint MonitorDefaultToNull = 0x00000000;
         private const uint MonitorDefaultToPrimary = 0x00000001;
         private const uint MonitorDefaultToNearest = 0x00000002;
+        private const int SmXVirtualScreen = 76;
+        private const int SmYVirtualScreen = 77;
+        private const int SmCxVirtualScreen = 78;
+        private const int SmCyVirtualScreen = 79;
 
         [DllImport("user32.dll")]
         private static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint dwFlags);
@@ -168,6 +172,9 @@ namespace WindowResizer
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
+
+        [DllImport("user32.dll")]
+        private static extern int GetSystemMetrics(int nIndex);
 
         // classContains parameter removed (class-name filter unused).
         public static IntPtr FindWindowForProcess(
@@ -592,6 +599,21 @@ namespace WindowResizer
             };
         }
 
+        private static RECT GetVirtualScreenBounds()
+        {
+            var left = GetSystemMetrics(SmXVirtualScreen);
+            var top = GetSystemMetrics(SmYVirtualScreen);
+            var width = Math.Max(1, GetSystemMetrics(SmCxVirtualScreen));
+            var height = Math.Max(1, GetSystemMetrics(SmCyVirtualScreen));
+            return new RECT
+            {
+                Left = left,
+                Top = top,
+                Right = left + width,
+                Bottom = top + height
+            };
+        }
+
         private static void ClampToScreenBounds(
             IntPtr hWnd,
             ref int x,
@@ -599,7 +621,7 @@ namespace WindowResizer
             ref int width,
             ref int height)
         {
-            var bounds = ResolveTargetBounds(hWnd, x, y, width, height);
+            var bounds = GetVirtualScreenBounds();
             var boundsWidth = Math.Max(1, bounds.Right - bounds.Left);
             var boundsHeight = Math.Max(1, bounds.Bottom - bounds.Top);
             width = ClampInt(Math.Max(1, width), 1, boundsWidth);
